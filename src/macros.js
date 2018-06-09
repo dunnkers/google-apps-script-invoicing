@@ -24,7 +24,7 @@ function onOpen() {
 } // onOpen()
 
 // https://gist.github.com/ixhd/3660885
-function exportSheet(sheetName) {
+function exportSheet(folder, sheetName) {
     const sheet = SpreadsheetApp.getActiveSheet();
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheets = ss.getSheets();
@@ -37,7 +37,8 @@ function exportSheet(sheetName) {
     const invoice = SpreadsheetApp.getActiveSheet();
 
     // save sheet as a PDF file
-    const file = DriveApp.createFile(ss.getBlob());
+    const dir = DriveApp.getFolderById(folder);
+    const file = dir.createFile(ss.getBlob());
 
     // show sheets
     sheets.forEach(sheet => sheet.showSheet());
@@ -76,26 +77,12 @@ function getQuarter(date) {
 
 function createInvoice() {
     const params = getParams(INVOICE_SHEET, PARAMS);
-    const file = exportSheet(INVOICE_SHEET);
+    // const file = exportSheet(INVOICE_FOLDER, INVOICE_SHEET);
     const today = Utilities.formatDate(new Date(), "GMT+1", "yyyy-MM-dd");
-
+    
+    // UPDATE IN RANGE DATA
     const { FactuurKlant, FactuurBTW, FactuurNetto, FactuurTotaal,
         FactuurNummer, FactuurPeriode } = params;
-    
-    // insert new invoice data in creation sheet
-    const cs = SpreadsheetApp.getActive().getSheetByName(INVOICE_CREATION_SHEET);
-    let i = 3, range;
-    while (true) {
-        const empty = value => !value || value === '';
-        range = cs.getRange(`A${i}:F${i}`);
-        const values = range.getValues()[0];
-        if (values.every(empty)) {
-            break;
-        }
-        i ++;
-    }
-    range.setValues([[FactuurNummer, FactuurPeriode, FactuurKlant, FactuurNetto, FactuurBTW, FactuurTotaal] ]);
-
 
     // update invoice number
     const is = SpreadsheetApp.getActive().getSheetByName(INVOICE_SHEET);
@@ -109,13 +96,46 @@ function createInvoice() {
     const folder = DriveApp.getFolderById(INVOICE_FOLDER);
     const year = FactuurPeriode.getFullYear();
     const quarter = getQuarter(FactuurPeriode);
-    const month = FactuurPeriode.toLocaleDateString('nl', {
-        month: 'long'
-    });
+    const month = Utilities.formatDate(FactuurPeriode, "Europe/Amsterdam", "MMM");
     const name = `${today} Factuur ${FactuurKlant} ${year}-Q${quarter}-${month}`;
-    file.setName(name);
-    const newFile = file.makeCopy(name, folder);
-    Browser.msgBox(`Successfully saved \`${newFile.getName()}\` to folder \` 
-                    ${folder.getName()}\``);
-    file.setTrashed(true);
+    // file.setName(name);
+
+
+    // https://docs.google.com/spreadsheets/d/ID/export?format=pdf&gid=SHEET_ID
+    // https://stackoverflow.com/questions/48163613/google-script-blob-conversion
+    
+    const paramss = {
+        method: "get",
+        headers: { "Authorization": "Bearer " + ScriptApp.getOAuthToken() }
+    };
+    const id = SpreadsheetApp.getActive().getId();
+    const sheetid = SpreadsheetApp.getActive().getSheetByName(INVOICE_SHEET).getSheetId();
+    const url = `https://docs.google.com/spreadsheets/d/${id}/export` +
+                `?format=pdf&gid=${sheetid}`;
+    const blob = UrlFetchApp.fetch(url, paramss).getBlob().setName(name);
+    const dir = DriveApp.getFolderById(INVOICE_FOLDER);
+    const file = dir.createFile(blob);
+
+ 
+
+    // insert new invoice data in creation sheet
+    const cs = SpreadsheetApp.getActive().getSheetByName(INVOICE_CREATION_SHEET);
+    let i = 3, range;
+    while (true) {
+        const empty = value => !value || value === '';
+        range = cs.getRange(`A${i}:G${i}`);
+        const values = range.getValues()[0];
+        if (values.every(empty)) {
+            break;
+        }
+        i++;
+    }
+    const link = `=HYPERLINK("${file.getUrl()}"; "${name}")`;
+    range.setValues([[FactuurNummer, FactuurPeriode, FactuurKlant, FactuurNetto, FactuurBTW, FactuurTotaal, link]]);
+
+
+    SpreadsheetApp.getActiveSpreadsheet().toast( 
+        `Successfully saved \`${file.getName()}\` to folder \` 
+                    ${folder.getName()}\``,
+        'Invoice created!');
 }

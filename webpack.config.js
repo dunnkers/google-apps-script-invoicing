@@ -1,12 +1,15 @@
-module.export = {
-    module: {
-        rules: [{
-            exclude: /node_modules/,
-            test: /\.js$/,
-            use: { loader: 'babel-loader' },
-        }],
-    },
+var webpack = require('webpack');
+
+module.exports = {
     output: {
-        libraryTarget: 'this'
-    }
+        libraryTarget: 'this',
+        library: 'henky'
+    },
+    mode: 'development',
+    node: false,
+    plugins: [
+        new webpack.ProvidePlugin({
+            dollo: 'util'
+        })
+    ]
 };

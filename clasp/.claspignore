@@ -1,4 +1,3 @@
 **/**
-!main.js
-!macros.js
+!*.js
 !appsscript.json

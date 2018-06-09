@@ -15,43 +15,13 @@ const PARAMS = [
     'FactuurPeriode'
 ];
 
-function onOpen() {
+function onOpen() { // eslint-disable-line
     SpreadsheetApp
         .getUi()
         .createMenu('Invoicing')
         .addItem('Create invoice', 'createInvoice')
         .addToUi();
 } // onOpen()
-
-// https://gist.github.com/ixhd/3660885
-function exportSheet(folder, sheetName) {
-    const sheet = SpreadsheetApp.getActiveSheet();
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheets = ss.getSheets();
-
-    // hide sheets
-    const filterSheets = sheet => sheet.getSheetName() !== sheetName;
-    sheets.filter(filterSheets).forEach(sheet => sheet.hideSheet());
-
-    // params
-    const invoice = SpreadsheetApp.getActiveSheet();
-
-    // save sheet as a PDF file
-    const dir = DriveApp.getFolderById(folder);
-    const file = dir.createFile(ss.getBlob());
-
-    // show sheets
-    sheets.forEach(sheet => sheet.showSheet());
-
-    // re-select previously active sheet
-    SpreadsheetApp.setActiveSheet(sheet);
-
-    return file;
-}
-
-function sendInvoiceByEmail() {
-    const name = Browser.inputBox('ID Check', 'Enter your name', Browser.Buttons.OK_CANCEL);
-}
 
 function getParams(sheetName, toMap) {
     const sheet = SpreadsheetApp.getActive().getSheetByName(sheetName);
@@ -66,19 +36,15 @@ function getParams(sheetName, toMap) {
     return params;
 }
 
-function getFirstFreeRow() {
-    cs.getRange('A3:E3')
-}
-
 function getQuarter(date) {
     var month = date.getMonth() + 1;
     return (Math.ceil(month / 3));
 }
 
-function createInvoice() {
+function createInvoice() { // eslint-disable-line
     const params = getParams(INVOICE_SHEET, PARAMS);
     // const file = exportSheet(INVOICE_FOLDER, INVOICE_SHEET);
-    const today = Utilities.formatDate(new Date(), "GMT+1", "yyyy-MM-dd");
+    const today = Utilities.formatDate(new Date(), 'GMT+1', 'yyyy-MM-dd');
     
     // UPDATE IN RANGE DATA
     const { FactuurKlant, FactuurBTW, FactuurNetto, FactuurTotaal,
@@ -96,7 +62,7 @@ function createInvoice() {
     const folder = DriveApp.getFolderById(INVOICE_FOLDER);
     const year = FactuurPeriode.getFullYear();
     const quarter = getQuarter(FactuurPeriode);
-    const month = Utilities.formatDate(FactuurPeriode, "Europe/Amsterdam", "MMM");
+    const month = Utilities.formatDate(FactuurPeriode, 'Europe/Amsterdam', 'MMM');
     const name = `${today} Factuur ${FactuurKlant} ${year}-Q${quarter}-${month}`;
     // file.setName(name);
 
@@ -105,8 +71,8 @@ function createInvoice() {
     // https://stackoverflow.com/questions/48163613/google-script-blob-conversion
     
     const paramss = {
-        method: "get",
-        headers: { "Authorization": "Bearer " + ScriptApp.getOAuthToken() }
+        method: 'get',
+        headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() }
     };
     const id = SpreadsheetApp.getActive().getId();
     const sheetid = SpreadsheetApp.getActive().getSheetByName(INVOICE_SHEET).getSheetId();
@@ -121,7 +87,7 @@ function createInvoice() {
     // insert new invoice data in creation sheet
     const cs = SpreadsheetApp.getActive().getSheetByName(INVOICE_CREATION_SHEET);
     let i = 3, range;
-    while (true) {
+    while (true) { // eslint-disable-line
         const empty = value => !value || value === '';
         range = cs.getRange(`A${i}:G${i}`);
         const values = range.getValues()[0];

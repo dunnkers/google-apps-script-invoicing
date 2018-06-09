@@ -1,5 +1,22 @@
 {
   "dependencies": {
     "@types/google-apps-script": "^0.0.23"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.0.0-beta.44",
+    "@babel/core": "7.0.0-beta.44",
+    "@babel/preset-env": "7.0.0-beta.44",
+    "cpy-cli": "^2.0.0"
+  },
+  "scripts": {
+    "build": "babel src -d dist --copy-files --include-dotfiles",
+    "clasp": "cd dist && clasp push",
+    "start": "npm run clasp",
+    "prestart": "npm run build"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   }
 }

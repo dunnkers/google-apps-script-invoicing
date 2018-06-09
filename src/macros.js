@@ -26,9 +26,9 @@ function exportSheet(sheetName) {
             sheets[i].hideSheet();
         }
     }
+    const ok = sheet => sheet.getSheetName() !== sheetName;
 
     // params
-    // 2017-11-19 Factuur Fabriquartz 2017-Q4-oktober
     var invoice = SpreadsheetApp.getActiveSheet();
     var namedRanges = invoice.getNamedRanges();
     var customer = namedRanges.forEach(function (namedRange) {

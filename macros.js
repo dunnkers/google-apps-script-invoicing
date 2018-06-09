@@ -3,6 +3,8 @@
 // let user choose folder manually
 // @see https://developers.google.com/apps-script/guides/dialogs
 var INVOICE_FOLDER = '1S7yfG1OfsjldHx69Z6yAJ2R8kJVY41KK';
+var INVOICE_SHEET = 'Factuur';
+var INVOICE_CREATION_SHEET = 'Factureren';
 
 function onOpen() {
     SpreadsheetApp
@@ -25,6 +27,16 @@ function exportSheet(sheetName) {
         }
     }
 
+    // params
+    // 2017-11-19 Factuur Fabriquartz 2017-Q4-oktober
+    var invoice = SpreadsheetApp.getActiveSheet();
+    var namedRanges = invoice.getNamedRanges();
+    var customer = namedRanges.forEach(function (namedRange) {
+        if (namedRange.getName() === 'FactuurKlant') {
+            Browser.msgBox(namedRange.getRange().getValue());
+        }
+    });
+
     // save sheet as a PDF file
     var file = DriveApp.createFile(ss.getBlob());
 
@@ -43,16 +55,20 @@ function sendInvoiceByEmail() {
     var name = Browser.inputBox('ID Check', 'Enter your name', Browser.Buttons.OK_CANCEL);
 }
 
+function getParams() {
+    var sheet = SpreadsheetApp.get();
+
+}
+
 function createInvoice() {
-    var file = exportSheet('Factuur');
+    var file = exportSheet(INVOICE_SHEET);
     var today = Utilities.formatDate(new Date(), "GMT+1", "yyyy-MM-dd");
-    file.setName(today);
     
     // move file by making a copy
     var folder = DriveApp.getFolderById(INVOICE_FOLDER);
     var name = today + ' Factuur ';
-    file.makeCopy(name, folder);
-    Browser.msgBox('Successfully saved ' + file.getName() + ' to folder `' + 
-        folder.getName() + '`');
+    var newFile = file.makeCopy(name, folder);
+    Browser.msgBox('Successfully saved `' + newFile.getName() + 
+        '` to folder `' + folder.getName() + '`');
     file.setTrashed(true);
 }

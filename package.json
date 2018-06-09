@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@types/google-apps-script": "^0.0.23"
+    "@types/google-apps-script": "^0.0.23",
+    "babel-plugin-array-includes": "^2.0.3"
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.44",
@@ -10,13 +11,16 @@
   },
   "scripts": {
     "build": "babel src -d dist --copy-files --include-dotfiles",
-    "clasp": "cd dist && clasp push",
-    "start": "npm run clasp",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "start": "cd dist && clasp push",
+    "poststart": ""
   },
   "babel": {
     "presets": [
       "@babel/preset-env"
+    ],
+    "plugins": [
+      "array-includes"
     ]
   }
 }

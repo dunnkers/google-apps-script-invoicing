@@ -1,0 +1,9 @@
+{
+  "timeZone": "Europe/Amsterdam",
+  "dependencies": {
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "sheets": {
+    "macros": []
+  }
+}

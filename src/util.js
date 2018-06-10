@@ -1,5 +1,5 @@
-module.exports = function () {
-
-    SpreadsheetApp.getActiveSpreadsheet().toast('gozer!!', 'wijfie!!');
-    return 'gozer';
+module.exports = class Util {
+    constructor() {
+        SpreadsheetApp.getActiveSpreadsheet().toast('goal !!', 'wijfie!!');
+    }
 };

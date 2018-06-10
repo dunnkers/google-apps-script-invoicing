@@ -1,3 +1,5 @@
-var util = require('./util');
+var Util = require('./util');
 
-global.createInvoice = util;
+global.createInvoice = () => {
+    new Util();   
+};

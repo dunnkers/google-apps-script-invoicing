@@ -25,9 +25,6 @@ global.createInvoice = () => {
         invoiceCustomer: customer
     } = invoiceData;
 
-    // update invoice number
-    number.setValue(number.getValue() + 1);
-
     // construct invoice filename
     const name = getInvoiceName(period.getValue(), customer.getValue());
 
@@ -48,4 +45,7 @@ global.createInvoice = () => {
         hyperLink
     ];
     insertRow(EXPORTED_INVOICES_RANGE, rowData);
+
+    // update invoice number
+    number.setValue(number.getValue() + 1);
 };

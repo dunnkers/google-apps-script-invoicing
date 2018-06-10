@@ -1,4 +1,4 @@
-var Util = require('./util');
+import { Util } from './util';
 
 global.createInvoice = () => {
     new Util();   

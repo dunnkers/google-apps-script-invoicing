@@ -23,12 +23,7 @@
   "babel": {
     "presets": [
       [
-        "env",
-        {
-          "targets": {
-            "chrome": "30"
-          }
-        }
+        "env"
       ]
     ],
     "plugins": [

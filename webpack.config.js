@@ -1,15 +1,13 @@
-var webpack = require('webpack');
+var GasPlugin = require("gas-webpack-plugin");
 
 module.exports = {
+    context: __dirname,
     output: {
-        libraryTarget: 'this',
-        library: 'henky'
+        path: __dirname,
+        filename: 'dist/main.gs'
     },
-    mode: 'development',
-    node: false,
+    mode: 'production', // ONLY WORKS IN PRODUCTION ENV
     plugins: [
-        new webpack.ProvidePlugin({
-            dollo: 'util'
-        })
+        new GasPlugin()
     ]
 };

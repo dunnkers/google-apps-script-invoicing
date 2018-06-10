@@ -1,18 +1,16 @@
 // @ts-check
-import { SHEET_EXPORT_URL } from './settings';
+const SHEET_EXPORT_URL = 'https://docs.google.com/spreadsheets/d';
 
-export const getParams = (sheetName, toMap) => {
-    const sheet = SpreadsheetApp.getActive().getSheetByName(sheetName);
-    const namedRanges = sheet.getNamedRanges();
+export const mapNamedRanges = mapping => {
+    const spreadsheet = SpreadsheetApp.getActive();
+    const result = {};
 
-    const params = {};
-    namedRanges
-        .filter(namedRange => toMap.includes(namedRange.getName()))
-        .forEach(mapIt => {
-            params[mapIt.getName()] = mapIt.getRange().getValue();
-        });
+    Object.keys(mapping).forEach(key => {
+        let namedRange = mapping[key];
+        result[key] = spreadsheet.getRangeByName(namedRange);
+    });
 
-    return params;
+    return result;
 };
 
 export const getQuarter = date => {

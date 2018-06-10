@@ -1,6 +1,7 @@
-import { getParams, saveSheetAsPDF, getInvoiceName, insertRow } from './util';
+import { saveSheetAsPDF, getInvoiceName, insertRow, mapNamedRanges } from './util';
 import {
-    INVOICE_FOLDER, INVOICE_SHEET, PARAMS,
+    INVOICE_MAPPING,
+    INVOICE_FOLDER,
     EXPORTED_INVOICES_RANGE
 } from './settings';
 
@@ -13,44 +14,38 @@ global.onOpen = () => {
 };
 
 global.createInvoice = () => {
+    // spreadsheet
+    const spreadsheet = SpreadsheetApp.getActive();
+
+    // fetch invoice data
+    const invoiceData = mapNamedRanges(INVOICE_MAPPING);
     const {
-        FactuurNummer,
-        FactuurPeriode,
-        FactuurKlant,
-        FactuurBTW,
-        FactuurNetto,
-        FactuurTotaal
-    } = getParams(INVOICE_SHEET, PARAMS);
+        invoiceNumber: number,
+        invoicePeriod: period,
+        invoiceCustomer: customer
+    } = invoiceData;
 
     // update invoice number
-    const is = SpreadsheetApp.getActive().getSheetByName(INVOICE_SHEET);
-    is.getNamedRanges().forEach(namedRange => {
-        if (namedRange.getName() === 'FactuurNummer') {
-            namedRange.getRange().setValue(FactuurNummer + 1);
-        }
-    });
+    number.setValue(number.getValue() + 1);
 
     // construct invoice filename
-    const name = getInvoiceName(FactuurPeriode, FactuurKlant);
-    
+    const name = getInvoiceName(period.getValue(), customer.getValue());
+
     // Save invoice sheet as PDF
+    const invoiceSheet = number.getSheet().getName();
     const folder = DriveApp.getFolderById(INVOICE_FOLDER);
-    const file = saveSheetAsPDF(INVOICE_SHEET, INVOICE_FOLDER, name);
-    SpreadsheetApp.getActiveSpreadsheet().toast(
-        `Successfully saved \`${file.getName()}\` to folder \` 
-                    ${folder.getName()}\``,
-        'Invoice created!');
+    const file = saveSheetAsPDF(invoiceSheet, INVOICE_FOLDER, name);
+    spreadsheet.toast(`Successfully saved \`${file.getName()}\` ` +
+                      `to folder \`${folder.getName()}\``, 'Invoice created!');
 
     // insert new invoice data in creation sheet
-    const link = `=HYPERLINK("${file.getUrl()}"; "${name}")`;
+    const hyperLink = `=HYPERLINK("${file.getUrl()}"; "${name}")`;
+    const dataArray = Object.keys(invoiceData).map(key => {
+        return invoiceData[key].getValue();
+    });
     const rowData = [
-        FactuurNummer,
-        FactuurPeriode,
-        FactuurKlant,
-        FactuurNetto,
-        FactuurBTW,
-        FactuurTotaal,
-        link
+        ...dataArray,
+        hyperLink
     ];
     insertRow(EXPORTED_INVOICES_RANGE, rowData);
 };

@@ -9,3 +9,4 @@ export const PARAMS = [
     'FactuurNummer',
     'FactuurPeriode'
 ];
+export const SHEET_EXPORT_URL = 'https://docs.google.com/spreadsheets/d';

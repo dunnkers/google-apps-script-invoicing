@@ -14,11 +14,14 @@
     "webpack-cli": "^3.0.3"
   },
   "scripts": {
-    "webpack": "webpack",
-    "postwebpack": "renamer --find 'gs' --replace 'js' ./dist/*.gs",
     "prebuild": "rm -rf dist",
-    "build": "yarn webpack",
-    "postbuild": "cp -R ./clasp/ dist && cd dist && clasp push"
+    "build": "webpack",
+    "postbuild": "yarn clasp",
+
+    "preclasp": "renamer --find 'gs' --replace 'js' ./dist/*.gs",
+    "clasp": "cp -R ./clasp/ dist && cd dist && clasp push",
+
+    "watch": "webpack -w"
   },
   "babel": {
     "presets": [

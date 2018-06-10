@@ -1,3 +1,4 @@
+// @ts-check
 import { SHEET_EXPORT_URL } from './settings';
 
 export const getParams = (sheetName, toMap) => {
@@ -50,4 +51,40 @@ export const getInvoiceName = (date, customer) => {
     const today = Utilities.formatDate(new Date(), 'GMT+1', 'yyyy-MM-dd');
     const name = `${today} Factuur ${customer} ${year}-Q${quarter}-${month}`;
     return name;
+};
+
+export const getFirstEmptyRow = (range) => {
+    const offset = range.getRow();
+    const matrix = range.getValues();
+    const empty = value => !value || value === '';
+
+    for (let i = 0; i < matrix.length; i ++) {
+        if (matrix[i].every(empty)) {
+            return offset + i;
+        }
+    }
+
+    return null;
+};
+
+export const insertRow = (rangeName, rowData) => {
+    const spreadsheet = SpreadsheetApp.getActive();
+    const range = spreadsheet.getRangeByName(rangeName);
+    
+    if (range === null) {
+        return false;
+    }
+
+    const emptyRow = getFirstEmptyRow(range);
+    if (emptyRow === null) {
+        return false;
+    }
+
+    const colIndex = range.getColumn();
+    const width = range.getWidth();
+    const rangeSheet = range.getSheet();
+    const insertionRange = rangeSheet.getRange(emptyRow, colIndex, 1, width);
+    insertionRange.setValues([ rowData ]);
+
+    return true;
 };

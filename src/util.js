@@ -1,4 +1,3 @@
-// @ts-check
 const SHEET_EXPORT_URL = 'https://docs.google.com/spreadsheets/d';
 
 export const mapNamedRanges = mapping => {

@@ -36,7 +36,7 @@ export const saveSheetAsPDF = (sheetName, driveFolderId, name) => {
     
     // Finally save PDF to folder
     const dir = DriveApp.getFolderById(driveFolderId);
-    blob.setName(name);
+    blob.setName(name.endsWith('.pdf') ? name : `${name}.pdf`); // ensure ext.
     const file = dir.createFile(blob);
     return file;
 };

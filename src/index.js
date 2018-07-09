@@ -4,12 +4,14 @@ import {
     INVOICE_FOLDER,
     EXPORTED_INVOICES_RANGE
 } from './settings';
+import { InvoiceEmail } from './invoice_email';
 
 global.onOpen = () => {
     SpreadsheetApp
         .getUi()
         .createMenu('Invoicing')
         .addItem('Create invoice', 'createInvoice')
+        .addItem('Make draft email', 'createInvoiceEmail')
         .addToUi();
 };
 
@@ -48,4 +50,12 @@ global.createInvoice = () => {
 
     // update invoice number
     number.setValue(number.getValue() + 1);
+};
+
+global.createInvoiceEmail = () => {
+    var file = DriveApp.getFileById('1rzcAtcGz781CT0mxK_FZm6XhKAa7qlBV');
+    GmailApp.createDraft('jeroenoverschie@gmail.com', 'Factuur juli', 'Zie bijlage', {
+        attachments: [file.getAs(MimeType.PDF)],
+        htmlBody: InvoiceEmail
+    });
 };

@@ -6,9 +6,6 @@ export const InvoiceEmail = `<html xmlns="http://www.w3.org/1999/xhtml">
     <meta name="format-detection" content="telephone=no" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat+Subrayada" rel="stylesheet" type="text/css">
 
-    <!-- Responsive Mobile-First Email Template by Konstantin Savchenko, 2015.
-	https://github.com/konsav/email-templates/  -->
-
     <style>
         /* Reset styles */
 

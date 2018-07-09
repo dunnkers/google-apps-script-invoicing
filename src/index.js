@@ -5,6 +5,7 @@ import {
     EXPORTED_INVOICES_RANGE
 } from './settings';
 import { InvoiceEmail } from './invoice_email';
+import { EmailPreview } from './email_preview';
 
 global.onOpen = () => {
     SpreadsheetApp
@@ -53,9 +54,19 @@ global.createInvoice = () => {
 };
 
 global.createInvoiceEmail = () => {
-    var file = DriveApp.getFileById('1rzcAtcGz781CT0mxK_FZm6XhKAa7qlBV');
-    GmailApp.createDraft('jeroenoverschie@gmail.com', 'Factuur juli', 'Zie bijlage', {
-        attachments: [file.getAs(MimeType.PDF)],
-        htmlBody: InvoiceEmail
-    });
+    // var file = DriveApp.getFileById('1rzcAtcGz781CT0mxK_FZm6XhKAa7qlBV');
+    // GmailApp.createDraft('jeroenoverschie@gmail.com', 'Factuur juli', 'Zie bijlage', {
+    //     attachments: [file.getAs(MimeType.PDF)],
+    //     htmlBody: InvoiceEmail
+    // });
+
+    
+    let preview = EmailPreview(InvoiceEmail);
+
+    // Display a modal dialog box with custom HtmlService content.
+    var htmlOutput = HtmlService
+        .createHtmlOutput(preview)
+        .setWidth(500)
+        .setHeight(600);
+    SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Email invoice');
 };
